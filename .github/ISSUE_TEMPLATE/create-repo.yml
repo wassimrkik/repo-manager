@@ -1,0 +1,29 @@
+name: Create Repository
+description: Create a Repository
+title: Request to Create a Repository
+assignees:
+- WassimReg
+body:
+- type: markdown
+  attributes:
+    value: |
+      DO NOT CHANGE THE LINE ABOVE.
+- type: markdown
+  attributes:
+    value: For GitHub organization edeuae
+- type: input
+  id: reponame
+  attributes:
+    label: Repository Name
+    description: |
+      Name of the Repository to Create
+      NO SPACES.
+  validations:
+    required: true
+- type: input
+  id: repondesc
+  attributes:
+    label: Repository Description
+    description: Description of the Repository to Create
+  validations:
+    required: false
