@@ -1,0 +1,52 @@
+name: "create-repo"
+
+on:
+  issues:
+    types: [opened, reopened]
+# Allows you to run this workflow manually from the Actions tab
+#  workflow_dispatch:
+
+jobs:
+  create-repo:
+    name: "create-repo"
+    runs-on: ['ubuntu-latest']
+    env:
+      CREATE_REPO_EVENT: ${{ github.event_name }}
+      CREATE_REPO_TITLE: ${{ github.event.issue.title }}
+      CREATE_REPO_NUMBER: ${{ github.event.issue.number }}
+      CREATE_REPO_MESSAGE: ${{ github.event.issue.body }}
+      ISSUE_REPO_URL: ${{ github.event.issue.repository_url }}
+      REPO_NAME: ${{ github.event.repository.full_name }}
+      REPO_URL: ${{ github.event.repository.url }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ACTOR: ${{ github.actor}}
+
+    if: github.event.issue.title  == 'Request to Create a Repository'
+   
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Token
+        id: github-app
+        uses: peter-murray/workflow-application-token-action@v1
+        with:
+          application_id: ${{ secrets.ONBOARDING_APPLICATION_ID }}
+          application_private_key: ${{ secrets.ONBOARDING_APPLICATION_PRIVATE_KEY }}
+          organization: ${{ secrets.ONBOARDING_APPLICATION_ORGANIZATION }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: '3.10'
+          
+      - name: Install Packages
+        run: | 
+          pip3 install requests
+          pip3 install PyGithub
+          
+      - name: Create Repo
+        run: 
+          python create-repo.py
+        env:
+          create_repo_token: ${{ steps.github-app.outputs.token }}
